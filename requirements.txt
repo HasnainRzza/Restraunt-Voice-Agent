@@ -1,0 +1,26 @@
+# Web Framework
+fastapi
+uvicorn[standard]
+
+# Pydantic email validation (required for EmailStr in main.py)
+email-validator
+
+# Async HTTP client (STT, TTS REST calls)
+httpx
+
+# Environment variable loading
+python-dotenv
+
+# Google Gemini LLM (llm.py, drift.py)
+google-genai
+
+# Authentication (auth.py)
+PyJWT
+bcrypt
+
+# Deepgram SDK (live mic streaming in main.py mic_recording_loop)
+deepgram-sdk
+
+# Local audio I/O (server-side mic capture + PCM playback)
+sounddevice
+numpy

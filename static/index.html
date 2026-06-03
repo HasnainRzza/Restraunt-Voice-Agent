@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hot Bagels AI Voice Agent Control Center</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body class="dark-theme">
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- AUTHENTICATION SCREEN -->
+    <div id="auth-screen" class="auth-screen">
+        <div class="auth-box glassmorphic animate-fade-in">
+            <div class="auth-logo">
+                <i data-lucide="speech" class="logo-icon"></i>
+                <h1>Hot Bagels AI</h1>
+                <p>Voice Agent Orchestrator Control Room</p>
+            </div>
+
+            <!-- Sign In Form -->
+            <div id="signin-card" class="auth-card">
+                <h2>Welcome Back</h2>
+                <p class="subtitle">Please sign in to access your orchestrator dashboard</p>
+                <form id="signin-form" novalidate>
+                    <div class="form-group">
+                        <label for="signin-email">Email Address</label>
+                        <div class="input-wrapper">
+                            <i data-lucide="mail" class="input-icon"></i>
+                            <input type="email" id="signin-email" placeholder="manager@hotbagels.com" required>
+                        </div>
+                        <span class="inline-error" id="signin-email-error"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="signin-password">Password</label>
+                        <div class="input-wrapper">
+                            <i data-lucide="lock" class="input-icon"></i>
+                            <input type="password" id="signin-password" placeholder="••••••••••••" required>
+                        </div>
+                        <span class="inline-error" id="signin-password-error"></span>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">
+                        <span>Sign In</span>
+                        <i data-lucide="arrow-right"></i>
+                    </button>
+                </form>
+                <div class="auth-actions">
+                    <button class="btn-link" id="goto-signup">Create Account</button>
+                    <button class="btn-link" id="goto-forgot">Forgot Password?</button>
+                </div>
+            </div>
+
+            <!-- Sign Up Form -->
+            <div id="signup-card" class="auth-card hidden">
+                <h2>Create Staff Account</h2>
+                <p class="subtitle">Register to manage sessions and voice parameters</p>
+                
+                <!-- Signup Step 1: Input details -->
+                <form id="signup-form" class="signup-step" novalidate>
+                    <div class="form-group">
+                        <label for="signup-name">Display Name</label>
+                        <div class="input-wrapper">
+                            <i data-lucide="user" class="input-icon"></i>
+                            <input type="text" id="signup-name" placeholder="John Doe" required>
+                        </div>
+                        <span class="inline-error" id="signup-name-error"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-email">Email Address</label>
+                        <div class="input-wrapper">
+                            <i data-lucide="mail" class="input-icon"></i>
+                            <input type="email" id="signup-email" placeholder="john@hotbagels.com" required>
+                        </div>
+                        <span class="inline-error" id="signup-email-error"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-password">Password</label>
+                        <div class="input-wrapper">
+                            <i data-lucide="lock" class="input-icon"></i>
+                            <input type="password" id="signup-password" placeholder="Minimum 6 characters" required>
+                        </div>
+                        <span class="inline-error" id="signup-password-error"></span>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">
+                        <span>Send Verification OTP</span>
+                        <i data-lucide="mail-warning"></i>
+                    </button>
+                </form>
+
+                <!-- Signup Step 2: Verify OTP -->
+                <form id="signup-otp-form" class="signup-step hidden" novalidate>
+                    <div class="verify-illustration">
+                        <i data-lucide="shield-check" class="verify-icon"></i>
+                        <p>We've sent a 6-digit OTP code to <strong id="signup-sent-email">your email</strong>. Please enter it below to activate your account.</p>
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-otp">Verification OTP Code</label>
+                        <div class="input-wrapper text-center">
+                            <input type="text" id="signup-otp" class="otp-input" placeholder="000000" maxlength="6" required>
+                        </div>
+                        <span class="inline-error" id="signup-otp-error"></span>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">
+                        <span>Verify & Create Account</span>
+                        <i data-lucide="check-circle-2"></i>
+                    </button>
+                    <button type="button" class="btn btn-secondary btn-block" id="back-to-signup-details">
+                        <i data-lucide="arrow-left"></i>
+                        <span>Change Details</span>
+                    </button>
+                </form>
+
+                <div class="auth-actions">
+                    <p>Already have an account? <button class="btn-link" id="goto-signin-from-signup">Sign In</button></p>
+                </div>
+            </div>
+
+            <!-- Forgot Password Form -->
+            <div id="forgot-card" class="auth-card hidden">
+                <h2>Reset Password</h2>
+                <p class="subtitle">Securely recover your manager dashboard credentials</p>
+                
+                <!-- Forgot Step 1: Request OTP -->
+                <form id="forgot-form" class="forgot-step" novalidate>
+                    <div class="form-group">
+                        <label for="forgot-email">Registered Email Address</label>
+                        <div class="input-wrapper">
+                            <i data-lucide="mail" class="input-icon"></i>
+                            <input type="email" id="forgot-email" placeholder="john@hotbagels.com" required>
+                        </div>
+                        <span class="inline-error" id="forgot-email-error"></span>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">
+                        <span>Send Reset OTP</span>
+                        <i data-lucide="send"></i>
+                    </button>
+                </form>
+
+                <!-- Forgot Step 2: Verify OTP & Enter New Password -->
+                <form id="forgot-reset-form" class="forgot-step hidden" novalidate>
+                    <div class="verify-illustration">
+                        <i data-lucide="key" class="verify-icon"></i>
+                        <p>An OTP code has been sent if the email matches. Enter the code and your new password below.</p>
+                    </div>
+                    <div class="form-group">
+                        <label for="forgot-otp">Verification OTP Code</label>
+                        <div class="input-wrapper text-center">
+                            <input type="text" id="forgot-otp" class="otp-input" placeholder="000000" maxlength="6" required>
+                        </div>
+                        <span class="inline-error" id="forgot-otp-error"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="forgot-new-password">New Password</label>
+                        <div class="input-wrapper">
+                            <i data-lucide="lock" class="input-icon"></i>
+                            <input type="password" id="forgot-new-password" placeholder="At least 6 characters" required>
+                        </div>
+                        <span class="inline-error" id="forgot-new-password-error"></span>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">
+                        <span>Reset Password & Log In</span>
+                        <i data-lucide="check-circle-2"></i>
+                    </button>
+                    <button type="button" class="btn btn-secondary btn-block" id="back-to-forgot-email">
+                        <i data-lucide="arrow-left"></i>
+                        <span>Back</span>
+                    </button>
+                </form>
+
+                <div class="auth-actions">
+                    <button class="btn-link" id="goto-signin-from-forgot">Back to Login</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN APP SCREEN -->
+    <div id="main-app" class="main-app hidden">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <i data-lucide="speech" class="sidebar-logo-icon"></i>
+                <div class="logo-text">
+                    <span class="brand-name">Hot Bagels AI</span>
+                    <span class="brand-sub">Orchestrator Panel</span>
+                </div>
+            </div>
+
+            <div class="user-profile-widget">
+                <div class="avatar" id="user-avatar-placeholder">H</div>
+                <div class="user-info">
+                    <span class="username" id="sidebar-username">Manager</span>
+                    <span class="user-role">Administrator</span>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active"><i data-lucide="layout-dashboard"></i> <span>Dashboard</span></a>
+                <a href="#" class="nav-item" id="nav-live-console"><i data-lucide="mic"></i> <span>Live Console</span></a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="btn btn-logout" id="logout-btn">
+                    <i data-lucide="log-out"></i>
+                    <span>Log Out</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Workspace Area -->
+        <main class="workspace">
+            <!-- Header bar -->
+            <header class="workspace-header">
+                <div class="search-bar-wrapper">
+                    <i data-lucide="search" class="search-icon"></i>
+                    <input type="text" id="global-search" placeholder="Search caller, order items, session IDs...">
+                </div>
+                <div class="header-status">
+                    <span class="status-indicator online"></span>
+                    <span class="status-text">Server Online</span>
+                </div>
+            </header>
+
+            <div class="workspace-content">
+                <!-- Stats Row -->
+                <section class="stats-grid">
+                    <div class="stat-card glassmorphic">
+                        <div class="stat-icon-wrapper blue">
+                            <i data-lucide="phone-call"></i>
+                        </div>
+                        <div class="stat-data">
+                            <span class="stat-label">Total Call Sessions</span>
+                            <h3 class="stat-val" id="stat-total-calls">0</h3>
+                        </div>
+                    </div>
+                    <div class="stat-card glassmorphic">
+                        <div class="stat-icon-wrapper red">
+                            <i data-lucide="alert-triangle"></i>
+                        </div>
+                        <div class="stat-data">
+                            <span class="stat-label">Drift Incidents</span>
+                            <h3 class="stat-val" id="stat-drift-calls">0</h3>
+                        </div>
+                    </div>
+                    <div class="stat-card glassmorphic">
+                        <div class="stat-icon-wrapper green">
+                            <i data-lucide="shopping-cart"></i>
+                        </div>
+                        <div class="stat-data">
+                            <span class="stat-label">Total Orders Placed</span>
+                            <h3 class="stat-val" id="stat-total-orders">0</h3>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Core Panels Grid -->
+                <div class="panels-grid">
+                    <!-- Left: Call History List -->
+                    <section class="panel-card glassmorphic list-panel">
+                        <div class="panel-header">
+                            <div class="panel-title-block">
+                                <h2>Recorded Voice Sessions</h2>
+                                <p>Review conversation histories, order items, and drift parameters</p>
+                            </div>
+                            <!-- Date Range Filters -->
+                            <div class="date-filters">
+                                <div class="filter-input-group">
+                                    <label for="filter-start-date">From</label>
+                                    <input type="date" id="filter-start-date">
+                                </div>
+                                <div class="filter-input-group">
+                                    <label for="filter-end-date">To</label>
+                                    <input type="date" id="filter-end-date">
+                                </div>
+                                <button class="btn btn-icon btn-secondary" id="clear-filters-btn" title="Clear Filters">
+                                    <i data-lucide="filter-x"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="table-container">
+                            <table class="session-table" id="session-table">
+                                <thead>
+                                    <tr>
+                                        <th>Caller</th>
+                                        <th>Date &amp; Time</th>
+                                        <th>Duration</th>
+                                        <th>Drift Status</th>
+                                        <th>Order Summary</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="session-table-body">
+                                    <!-- Dynamic rows loaded here -->
+                                    <tr class="state-row">
+                                        <td colspan="5">
+                                            <div class="loading-state">
+                                                <div class="spinner"></div>
+                                                <span>Loading recorded call logs...</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Pagination Footer -->
+                        <div class="panel-footer">
+                            <span class="pagination-info" id="pagination-info">Showing 0 of 0 logs</span>
+                            <div class="pagination-controls">
+                                <button class="btn btn-secondary btn-sm" id="prev-page-btn" disabled>
+                                    <i data-lucide="chevron-left"></i> <span>Prev</span>
+                                </button>
+                                <button class="btn btn-secondary btn-sm" id="next-page-btn" disabled>
+                                    <span>Next</span> <i data-lucide="chevron-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Right Column: Interactive Simulator & Preview Panel -->
+                    <div class="right-column-grid">
+                        <!-- Active Live Call Simulator -->
+                        <section class="panel-card glassmorphic simulator-panel">
+                            <div class="panel-header">
+                                <div class="panel-title-block">
+                                    <h2>Live Call Simulator</h2>
+                                    <p>Start local mic session to interact with agent</p>
+                                </div>
+                                <div id="live-indicator-badge" class="live-badge hidden">
+                                    <span class="pulse-dot"></span>
+                                    <span>LIVE</span>
+                                </div>
+                            </div>
+                            <div class="simulator-body">
+                                <div id="mic-ready-state" class="sim-state active">
+                                    <div class="sim-artwork">
+                                        <div class="radial-ring outer animate-pulse"></div>
+                                        <div class="radial-ring inner animate-pulse"></div>
+                                        <div class="artwork-icon-circle">
+                                            <i data-lucide="mic" class="artwork-mic-icon"></i>
+                                        </div>
+                                    </div>
+                                    <p class="sim-instructions">Ready to initiate live test. Starting the call activates the local microphone and plays synthesized agent responses via your speakers.</p>
+                                    
+                                    <div class="form-group compact">
+                                        <label for="sim-caller-id">Caller Phone/ID</label>
+                                        <input type="text" id="sim-caller-id" value="+15550199" placeholder="Enter Caller ID">
+                                    </div>
+                                    
+                                    <div class="form-group compact" style="margin-bottom: 1.25rem;">
+                                        <label for="sim-audio-route">Audio Device Routing</label>
+                                        <div class="input-wrapper">
+                                            <select id="sim-audio-route" style="width: 100%; background: rgba(15, 23, 42, 0.6); border: 1px solid var(--border-color); border-radius: var(--border-radius); padding: 10px; color: var(--text-primary); font-family: var(--font-body); font-size: 0.9rem; outline: none; transition: border-color var(--transition-speed);">
+                                                <option value="server">Server Hardware (Local Mic &amp; Speakers)</option>
+                                                <option value="browser">Web Browser (Remote Streaming via API)</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <button class="btn btn-primary btn-block btn-lg" id="start-sim-call-btn">
+                                        <i data-lucide="phone"></i>
+                                        <span>Start Local Call Session</span>
+                                    </button>
+                                </div>
+
+                                <div id="mic-active-state" class="sim-state hidden">
+                                    <div class="sim-artwork active">
+                                        <div class="radial-ring outer recording animate-mic-pulse"></div>
+                                        <div class="radial-ring inner recording animate-mic-pulse"></div>
+                                        <div class="artwork-icon-circle active">
+                                            <i data-lucide="phone-forwarded" class="artwork-mic-icon active"></i>
+                                        </div>
+                                    </div>
+                                    <h4 class="active-caller-title">Session: <span id="active-session-id-display">...</span></h4>
+                                    <p class="sim-instructions status-listening">🎙️ Microphone Active. Start speaking to the voice agent...</p>
+                                    
+                                    <div class="live-stats">
+                                        <div class="live-stat-badge">
+                                            <i data-lucide="clock"></i>
+                                            <span id="active-session-timer">00:00</span>
+                                        </div>
+                                        <div class="live-stat-badge" id="live-drift-indicator">
+                                            <i data-lucide="shield-check"></i>
+                                            <span>System Re-anchored</span>
+                                        </div>
+                                    </div>
+
+                                    <button class="btn btn-danger btn-block btn-lg" id="end-sim-call-btn">
+                                        <i data-lucide="phone-off"></i>
+                                        <span>Hang Up &amp; Finalize Order</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Detail View (Initially hidden or showing selection prompt) -->
+                        <section class="panel-card glassmorphic detail-panel" id="detail-panel">
+                            <!-- Empty State -->
+                            <div class="detail-empty-state" id="detail-empty-state">
+                                <i data-lucide="info" class="empty-icon"></i>
+                                <h3>No Session Selected</h3>
+                                <p>Select a call from the recorded voice list on the left to see transcripts and order summaries.</p>
+                            </div>
+
+                            <!-- Detailed Content -->
+                            <div class="detail-content-wrapper hidden" id="detail-content-wrapper">
+                                <div class="detail-header-block">
+                                    <div class="detail-meta">
+                                        <h3 id="detail-caller-id">+15550199</h3>
+                                        <span class="detail-date" id="detail-date">Oct 12, 2026 - 12:45 PM</span>
+                                    </div>
+                                    <div class="detail-badges">
+                                        <span class="badge" id="detail-drift-badge">No Drift</span>
+                                        <span class="badge secondary" id="detail-duration">0m 45s</span>
+                                    </div>
+                                </div>
+
+                                <!-- Tabs (Transcript vs Order Details) -->
+                                <div class="detail-tabs">
+                                    <button class="tab-btn active" data-tab="tab-transcript">Conversation Transcript</button>
+                                    <button class="tab-btn" data-tab="tab-order">Structured Order</button>
+                                </div>
+
+                                <div class="tab-contents">
+                                    <!-- Tab 1: Transcript -->
+                                    <div class="tab-content active" id="tab-transcript">
+                                        <div class="transcript-feed" id="transcript-feed">
+                                            <!-- Dynamic chat bubbles -->
+                                        </div>
+                                    </div>
+
+                                    <!-- Tab 2: Structured Order -->
+                                    <div class="tab-content" id="tab-order">
+                                        <div class="order-summary-box">
+                                            <h4>Ordered Items</h4>
+                                            <div class="order-table-container">
+                                                <table class="order-table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Item</th>
+                                                            <th>Qty</th>
+                                                            <th>Unit Price</th>
+                                                            <th>Total</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="order-items-tbody">
+                                                        <!-- Dynamic order rows -->
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <div class="order-total-block">
+                                                <span>Grand Total</span>
+                                                <strong id="order-total-amount">$0.00</strong>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Core App JS -->
+    <script src="/static/app.js"></script>
+</body>
+</html>
